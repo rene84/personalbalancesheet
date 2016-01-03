@@ -15,13 +15,16 @@
 </head>
 <body>
   <div class="row">
-    <div class="col-md-12">
-      <h1 align="center">Personal Balance Sheet</h1>
+    <div class="col-md-12" ng-controller="AppCtrl as all">
+      <h1 align="center">
+        Personal Balance Sheet
+        <button class="btn btn-primary" ng-click="all.clearAll()">clear all</button>
+      </h1>
     </div>
   </div>
   <div class="row">
     <div class="col-md-1"></div>
-    <div class="col-md-4" ng-controller="IncomeCtrl as income">
+    <div class="col-md-4" ng-controller="RevenueCtrl as revenue">
       <h4>Income</h4>
       <table class="table table-bordered table-hover table-condensed table-striped" width="400">
         <thead>
@@ -32,27 +35,27 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="element in income.income">
-            <td><span editable-text="element.name" e-name="name" e-form="rowform" e-required>{{ element.name || 'empty' }}</span></td>
-            <td><span editable-text="element.amount" e-name="value" e-form="rowform" e-required>{{ element.amount || 0 | currency }}</span></td>
+          <tr ng-repeat="item in revenue">
+            <td><span editable-text="item.name" e-name="name" e-form="rowform" e-required>{{ item.name || 'empty' }}</span></td>
+            <td><span editable-text="item.amount" e-name="amount" e-form="rowform" e-required>{{ item.amount || 0 | currency }}</span></td>
             <td style="white-space: nowrap">
-              <!-- form -->
-              <form editable-form name="rowform" onbeforesave="saveIncome($data, element.id)" ng-show="rowform.$visible"
-                class="form-buttons form-inline" shown="inserted == element">
+              <form editable-form name="rowform" onbeforesave="saveItem($data, $index)" ng-show="rowform.$visible" class="form-buttons form-inline"
+                shown="inserted == item">
                 <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">save</button>
                 <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">cancel</button>
               </form>
               <div class="buttons" ng-show="!rowform.$visible">
                 <button class="btn btn-primary" ng-click="rowform.$show()">edit</button>
-                <button class="btn btn-danger" ng-click="removeAsset($index)">del</button>
+                <button class="btn btn-danger" ng-click="removeItem($index)">del</button>
               </div>
             </td>
           </tr>
         </tbody>
       </table>
+      <button class="btn btn-danger" ng-click="clearRevenue()">clear</button>
     </div>
     <div class="col-md-2"></div>
-    <div class="col-md-4" ng-controller="ExpenseCtrl as expenses">
+    <div class="col-md-4" ng-controller="ExpenseCtrl as expense">
       <h4>Expenses</h4>
       <table class="table table-bordered table-hover table-condensed table-striped" width="400">
         <thead>
@@ -63,31 +66,31 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="element in expenses.expenses">
-            <td><span editable-text="element.name" e-name="name" e-form="rowform" e-required>{{ element.name || 'empty' }}</span></td>
-            <td><span editable-text="element.amount" e-name="value" e-form="rowform" e-required>{{ element.amount || 0 | currency }}</span></td>
+          <tr ng-repeat="item in expense">
+            <td><span editable-text="item.name" e-name="name" e-form="rowform" e-required>{{ item.name || 'empty' }}</span></td>
+            <td><span editable-text="item.amount" e-name="amount" e-form="rowform" e-required>{{ item.amount || 0 | currency }}</span></td>
             <td style="white-space: nowrap">
-              <!-- form -->
-              <form editable-form name="rowform" onbeforesave="saveIncome($data, element.id)" ng-show="rowform.$visible"
-                class="form-buttons form-inline" shown="inserted == element">
+              <form editable-form name="rowform" onbeforesave="saveItem($data, $index)" ng-show="rowform.$visible" class="form-buttons form-inline"
+                shown="inserted == item">
                 <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">save</button>
                 <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">cancel</button>
               </form>
               <div class="buttons" ng-show="!rowform.$visible">
                 <button class="btn btn-primary" ng-click="rowform.$show()">edit</button>
-                <button class="btn btn-danger" ng-click="removeAsset($index)">del</button>
+                <button class="btn btn-danger" ng-click="removeItem($index)">del</button>
               </div>
             </td>
           </tr>
         </tbody>
       </table>
+      <button class="btn btn-danger" ng-click="clearExpense()">clear</button>
     </div>
     <div class="col-md-1"></div>
   </div>
   <div class="row">
     <div class="col-md-1"></div>
-    <div class="col-md-3"></div>
-    <div class="col-md-4" ng-controller="BalanceCtrl as balance">
+    <div class="col-md-2"></div>
+    <div class="col-md-6" ng-controller="BalanceCtrl as balance">
       <h4>Assets</h4>
       <table class="table table-bordered table-hover table-condensed table-striped" width="400">
         <thead>
@@ -101,14 +104,14 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="asset in balance.assets">
+          <tr ng-repeat="asset in balance">
             <td><span editable-text="asset.name" e-name="name" e-form="rowform" e-required>{{ asset.name || 'empty' }}</span></td>
             <td><span editable-text="asset.value" e-name="value" e-form="rowform" e-required>{{ asset.value || 0 | currency}}</span></td>
             <td><span editable-text="asset.revenue" e-name="revenue" e-form="rowform" e-required>{{ asset.revenue || 0 | currency }}</span></td>
             <td><span editable-text="asset.growth" e-name="growth" e-form="rowform" e-required>{{ asset.growth || 0 }}%</span></td>
             <td><span editable-text="asset.cost" e-name="cost" e-form="rowform" e-required>{{ asset.cost || 0 | currency }}</span></td>
             <td style="white-space: nowrap">
-              <form editable-form name="rowform" onbeforesave="saveAsset($data, asset.id)" ng-show="rowform.$visible" class="form-buttons form-inline"
+              <form editable-form name="rowform" onbeforesave="saveAsset($data, $index)" ng-show="rowform.$visible" class="form-buttons form-inline"
                 shown="inserted == asset">
                 <button type="submit" ng-disabled="rowform.$waiting" class="btn btn-primary">save</button>
                 <button type="button" ng-disabled="rowform.$waiting" ng-click="rowform.$cancel()" class="btn btn-default">cancel</button>
@@ -121,8 +124,9 @@
           </tr>
         </tbody>
       </table>
+      <button class="btn btn-danger" ng-click="clearBalance()">clear</button>
     </div>
-    <div class="col-md-3"></div>
+    <div class="col-md-2"></div>
     <div class="col-md-1"></div>
   </div>
 </body>
