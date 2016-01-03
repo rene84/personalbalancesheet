@@ -1,12 +1,16 @@
 'use strict';
 
-// Declare app level module which depends on views, and components
-angular.module('myApp', [
-  'ngRoute',
-  'myApp.view1',
-  'myApp.view2',
-  'myApp.version'
-]).
+angular.module('app', [ 'ngRoute', 'ui.bootstrap']).
 config(['$routeProvider', function($routeProvider) {
-  $routeProvider.otherwise({redirectTo: '/view1'});
-}]);
+  $routeProvider.otherwise({redirectTo: '/'})
+}]).
+
+controller('AssetController', function() {
+		this.asset = {
+			name : 'House',
+			value : 200000,
+			revenue : 3,
+			cost : 1,
+			growth : 4
+		};
+});
